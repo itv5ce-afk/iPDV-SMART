@@ -1442,12 +1442,12 @@
       </div>
 
       <div class="input-group">
-        <label>WhatsApp</label>
+        <label>WhatsApp *</label>
         <div class="whatsapp-input-wrap">
           <div class="whatsapp-prefix"><span class="flag">🇧🇷</span><span>+55</span></div>
-          <input type="tel" id="clientWhatsapp" placeholder="(11) 99999-9999 (opcional)" inputmode="tel" autocomplete="tel">
+          <input type="tel" id="clientWhatsapp" placeholder="(11) 99999-9999" inputmode="tel" autocomplete="tel">
         </div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Opcional. Digite apenas DDD + número. Ex: 11999999999</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Digite apenas DDD + número. Ex: 11999999999</div>
       </div>
 
       <div class="toggle-row" id="deliveryToggleRow">
@@ -1982,9 +1982,8 @@
       list.innerHTML = filtered.map(c => {
         const initials = getInitials(c.name);
         const whatsappFormatted = formatWhatsapp(c.whatsapp);
-        const whatsappDisplay = whatsappFormatted ? `📱 +55 ${escapeHtml(whatsappFormatted)}` : '📱 Sem WhatsApp';
         const badgeHtml = c.delivery ? '<span class="client-badge" style="font-size:9px; padding: 1px 5px;">🏠 Domicílio</span>' : '';
-        return `<div class="client-item" style="cursor: pointer;" onclick="selectClientForSaleById(${c.id})"><div class="client-avatar" style="width: 40px; height: 40px; font-size: 16px;">${escapeHtml(initials)}</div><div class="client-info"><div class="client-name" style="font-size: 14px;">${escapeHtml(c.name)}${badgeHtml}</div><div class="client-meta"><div class="client-meta-row">${whatsappDisplay}</div></div></div><div style="color: var(--accent-orange); font-size: 20px;">✓</div></div>`;
+        return `<div class="client-item" style="cursor: pointer;" onclick="selectClientForSaleById(${c.id})"><div class="client-avatar" style="width: 40px; height: 40px; font-size: 16px;">${escapeHtml(initials)}</div><div class="client-info"><div class="client-name" style="font-size: 14px;">${escapeHtml(c.name)}${badgeHtml}</div><div class="client-meta"><div class="client-meta-row">📱 +55 ${escapeHtml(whatsappFormatted)}</div></div></div><div style="color: var(--accent-orange); font-size: 20px;">✓</div></div>`;
       }).join('');
     }
   }
@@ -1999,8 +1998,7 @@
       display.style.display = 'block';
       document.getElementById('selectedClientName').textContent = currentClient.name;
       const whatsappFormatted = formatWhatsapp(currentClient.whatsapp);
-      const whatsappDisplay = whatsappFormatted ? `📱 +55 ${whatsappFormatted}` : '📱 Sem WhatsApp';
-      let details = whatsappDisplay;
+      let details = `📱 +55 ${whatsappFormatted}`;
       if (currentClient.delivery && currentClient.address) details += ` • 📍 ${currentClient.address}${currentClient.neighborhood ? ', ' + currentClient.neighborhood : ''}`;
       document.getElementById('selectedClientDetails').textContent = details;
     } else { display.style.display = 'none'; }
@@ -2024,7 +2022,6 @@
     }
     list.innerHTML = participatingClients.map(c => {
       const whatsappFormatted = formatWhatsapp(c.whatsapp);
-      const whatsappDisplay = whatsappFormatted ? `📱 +55 ${escapeHtml(whatsappFormatted)}` : '📱 Sem WhatsApp';
       const addressText = (c.delivery && c.address) ? `${c.address}${c.neighborhood ? ' - ' + c.neighborhood : ''}` : 'Não informado';
       let promoItemsHtml = '';
       for (const [prodId, count] of Object.entries(c.promoProgress)) {
@@ -2034,11 +2031,9 @@
           promoItemsHtml += `<div style="display:flex; align-items:center; background:var(--bg-dark); padding:8px; border-radius:8px; margin-top:8px;">${imgHtml}<div style="flex:1;"><div style="font-size:13px; font-weight:600; color:var(--text-white);">${escapeHtml(prod.name)}</div><div style="font-size:12px; color:var(--text-muted);">Progresso: <strong style="color:var(--accent-orange);">${count}</strong> / ${prod.promoQuantity}</div></div></div>`;
         }
       }
-      const waButton = c.whatsapp 
-        ? `<button class="btn btn-success" style="margin-top: 12px; padding: 10px;" onclick="window.open('https://wa.me/55${c.whatsapp}?text=${encodeURIComponent('Parabéns! Você Comprou e Ganhou!! Nós da Gordo Água estamos felizes em presentear você!!!')}', '_blank')"> Enviar Mensagem no WhatsApp</button>` 
-        : `<button class="btn btn-dark" style="margin-top: 12px; padding: 10px;" disabled>WhatsApp não informado</button>`;
-      
-      return `<div class="client-item" style="flex-direction: column; align-items: stretch;"><div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;"><div class="client-avatar" style="width:48px; height:48px; font-size:18px;">${getInitials(c.name)}</div><div style="flex:1;"><div class="client-name">${escapeHtml(c.name)}</div><div class="client-meta"><div class="client-meta-row">${whatsappDisplay}</div><div class="client-meta-row">📍 ${escapeHtml(addressText)}</div></div></div></div><div style="border-top: 1px dashed var(--border); padding-top: 8px; margin-top: 4px;"><div style="font-size:12px; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">🎁 Promoção Ativa:</div>${promoItemsHtml}</div>${waButton}</div>`;
+      const waMsg = `Parabéns!\nVocê Comprou e Ganhou!!\nNós da Gordo Água estamos felizes em presentear você!!!`;
+      const waLink = `https://wa.me/55${c.whatsapp}?text=${encodeURIComponent(waMsg)}`;
+      return `<div class="client-item" style="flex-direction: column; align-items: stretch;"><div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;"><div class="client-avatar" style="width:48px; height:48px; font-size:18px;">${getInitials(c.name)}</div><div style="flex:1;"><div class="client-name">${escapeHtml(c.name)}</div><div class="client-meta"><div class="client-meta-row">📱 +55 ${escapeHtml(whatsappFormatted)}</div><div class="client-meta-row">📍 ${escapeHtml(addressText)}</div></div></div></div><div style="border-top: 1px dashed var(--border); padding-top: 8px; margin-top: 4px;"><div style="font-size:12px; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">🎁 Promoção Ativa:</div>${promoItemsHtml}</div><button class="btn btn-success" style="margin-top: 12px; padding: 10px;" onclick="window.open('${waLink}', '_blank')"> Enviar Mensagem no WhatsApp</button></div>`;
     }).join('');
   }
 
@@ -2150,10 +2145,9 @@
       list.innerHTML = filtered.map(c => {
         const initials = getInitials(c.name);
         const whatsappFormatted = formatWhatsapp(c.whatsapp);
-        const whatsappDisplay = whatsappFormatted ? `📱 +55 ${escapeHtml(whatsappFormatted)}` : '📱 Sem WhatsApp';
         const badgeHtml = c.delivery ? '<span class="client-badge"> Domicílio</span>' : '';
         const addressHtml = c.delivery && c.address ? `<div class="client-meta-row">📍 ${escapeHtml(c.address)}${c.neighborhood ? ' - ' + escapeHtml(c.neighborhood) : ''}</div>` : '';
-        return `<div class="client-item"><div class="client-avatar">${escapeHtml(initials)}</div><div class="client-info"><div class="client-name">${escapeHtml(c.name)}${badgeHtml}</div><div class="client-meta"><div class="client-meta-row">${whatsappDisplay}</div>${addressHtml}</div></div><div class="client-actions"><button class="icon-btn edit" onclick="editClient(${c.id})">✏️</button><button class="icon-btn delete" onclick="deleteClient(${c.id})">🗑️</button></div></div>`;
+        return `<div class="client-item"><div class="client-avatar">${escapeHtml(initials)}</div><div class="client-info"><div class="client-name">${escapeHtml(c.name)}${badgeHtml}</div><div class="client-meta"><div class="client-meta-row"> +55 ${escapeHtml(whatsappFormatted)}</div>${addressHtml}</div></div><div class="client-actions"><button class="icon-btn edit" onclick="editClient(${c.id})">✏️</button><button class="icon-btn delete" onclick="deleteClient(${c.id})">🗑️</button></div></div>`;
       }).join('');
     }
     document.getElementById('statClients').textContent = clients.length;
@@ -2195,21 +2189,10 @@
     const address = document.getElementById('clientAddress').value.trim();
     const neighborhood = document.getElementById('clientNeighborhood').value.trim();
     if (!name) { toast('Informe o nome!', 'error'); return; }
-    
-    // WhatsApp é opcional, mas se preenchido, deve ter 10 ou 11 dígitos
-    if (whatsapp.length > 0 && (whatsapp.length < 10 || whatsapp.length > 11)) { 
-      toast('WhatsApp inválido! Use DDD + número.', 'error'); 
-      return; 
-    }
-    
+    if (whatsapp.length < 10 || whatsapp.length > 11) { toast('WhatsApp inválido!', 'error'); return; }
     if (delivery && (!address || !neighborhood)) { toast('Preencha endereço e bairro!', 'error'); return; }
-    
-    // Verificar duplicidade apenas se whatsapp foi informado
-    if (whatsapp.length > 0) {
-      const duplicate = clients.find(c => c.whatsapp === whatsapp && String(c.id) !== String(id));
-      if (duplicate) { toast('Já existe cliente com este WhatsApp!', 'error'); return; }
-    }
-
+    const duplicate = clients.find(c => c.whatsapp === whatsapp && String(c.id) !== String(id));
+    if (duplicate) { toast('Já existe cliente com este WhatsApp!', 'error'); return; }
     if (id) {
       const c = clients.find(cl => cl.id === parseInt(id));
       Object.assign(c, { name, whatsapp, delivery, address, neighborhood });
@@ -2238,8 +2221,7 @@
           const descPart = i.description ? `<span class="sale-item-chip-desc">${escapeHtml(i.description)}</span>` : '';
           return `<div class="sale-item-chip">${imgPart}<div class="sale-item-chip-text"><span class="sale-item-chip-name">${i.qty}× ${escapeHtml(i.name)}</span>${descPart}</div></div>`;
         }).join('');
-        const whatsappDisplay = s.client.whatsapp ? `📱 +55 ${formatWhatsapp(s.client.whatsapp)}` : '📱 Sem WhatsApp';
-        const clientHtml = s.client ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);"><div style="font-size: 12px; font-weight: 700; color: var(--accent-orange); margin-bottom: 4px;">👤 ${escapeHtml(s.client.name)}</div><div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${whatsappDisplay}${s.client.delivery && s.client.address ? `<br>📍 ${escapeHtml(s.client.address)}${s.client.neighborhood ? ' - ' + escapeHtml(s.client.neighborhood) : ''}` : ''}</div></div>` : '<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text-muted);">👤 Consumidor Final</div>';
+        const clientHtml = s.client ? `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);"><div style="font-size: 12px; font-weight: 700; color: var(--accent-orange); margin-bottom: 4px;">👤 ${escapeHtml(s.client.name)}</div><div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">📱 +55 ${formatWhatsapp(s.client.whatsapp)}${s.client.delivery && s.client.address ? `<br>📍 ${escapeHtml(s.client.address)}${s.client.neighborhood ? ' - ' + escapeHtml(s.client.neighborhood) : ''}` : ''}</div></div>` : '<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text-muted);">👤 Consumidor Final</div>';
         return `<div class="sale-item"><div class="sale-header"><div><div class="sale-id">Venda #${String(s.id).slice(-6)}</div><div class="sale-date">${dateStr}</div></div><div class="sale-total">R$ ${s.total.toFixed(2)}</div></div><div class="sale-items-list">${itemsChips}</div>${clientHtml}</div>`;
       }).join('');
     }
